@@ -10,21 +10,40 @@
 </header>
     <strong><nav>
       <ul class="menu">
-        <li><a href="{{ url_for('upload') }}">Upload</a></li>
+        <a href="{{ url_for('upload') }}" class="w3-button w3-black">Upload</a>
       </ul>
     </nav></strong>
 <div class="w3-container">
   <p>BrighterSpace is a public repository for University of Dallas students to 
-    post their study documents from any class!</p>    
+    post their study documents from any class</p>
+        
+    <form class="w3-container w3-card-4" action="search">
+      <h1>Select Search Requirements</h1>
+      <div class="w3-bar">
+          <select id="grades" class="w3-select" name="gID">
+            <option value="" disabled selected>Choose your option</option>
+            {% for val in grades %}
+            <option value="{{val.id}}">{{ val.name }}</option>
+            {% endfor %}
+          </select>
+          <select id="subjects" class="w3-select" name="sID">
+            <option value="" disabled selected>Choose your option</option>
+            {% for val in subjects %}
+            <option value="{{val.id}}">{{ val.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      <p><button id="searchButton" class="w3-btn w3-teal">Search</button></p>
+    </form>
 
       {% block content %}
       <div class="w3-responsive" style="height:600px;overflow:auto;">
         <table class="w3-table-all">
           <!-- table header -->
-          {% if result %}
+          {% if header %}
           <thead>
             <tr class="w3-green">
-              {% for key in result[0] %}
+              {% for key in header %}
               <th> {{ key }} </th>
               {% endfor %}
             </tr>
@@ -32,9 +51,9 @@
           {% endif %}
         
           <!-- table rows -->
-          {% for dict_item in result %}
+          {% for list in data %}
           <tr>
-            {% for value in dict_item.values() %}
+            {% for value in list %}
             <td> {{ value }} </td>
             {% endfor %}
           </tr>
@@ -47,5 +66,12 @@
 </body>
 </html>
 
+<script>
+  var gradeID = document.getElementById('grades').value;
+  var subjectID = document.getElementById('subjects').value;
+  var button = document.getElementById("searchButton")
 
-
+  searchButton.addEventListener('click', function(e) {
+    document.location.href = '/search?gID=' + gradeID + '&sID=' + subjectID;
+  });
+</script>
