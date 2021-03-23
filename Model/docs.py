@@ -1,24 +1,19 @@
-from subjects import subject
-from grades import grade
-from users import user
-
 class doc:
     id = 0
     name = ''
     doc_URL = ''
     professor = ''
-    current_grade = grade()
-    current_subject = subject()
-    create_user = user()
+    gradeID = 0
+    subjectID = 0
+    create_user = ''
 
 
-    def __init__(self, id, name, doc_URL, professor, grade, subject, user):
+    def __init__(self, id, name, doc_URL, gradeID, subjectID, user):
         self.id = id
         self.name = name
         self.doc_URL = doc_URL
-        self.professor = professor
-        self.current_grade = grade
-        self.curretn_subject = subject
+        self.gradeID = gradeID
+        self.subjectID = subjectID
         self.create_user = user
     
     def printName(self):
