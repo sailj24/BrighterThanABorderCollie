@@ -53,35 +53,51 @@ for d in grades_maps:
     values = [value for value in d.values()]
     in_grade = grade(values[0], values[1])
     grades.append(in_grade)
-    #print(values)
+    print(values)
 
 for d in subjects_map:
     values = [value for value in d.values()]
     in_subject = subject(values[0], values[1])
     subjects.append(in_subject)
-    #print(values)
+    print(values)
 
 #functions
-def display_all_docs():
+def name_to_int(name):                      #way to jump back and forth between a name and id
+    for grade in grades:
+        if name == grade.name:
+            return grade.id
+    for subject in subjects:
+        if name == subject.name:
+            return subject.id
+
+def int_to_name(int):
+    for grade in grades:
+        if int == grade.id:
+            return grade.name
+    for subject in subjects:
+        if int == subject.id:
+            return subject.name
+
+def display_all_docs():                             #fills the list
     filtered_array = []
-    for doc in docs:
-        g = [g.name for g in grades if g.id == doc.gradeID][0]
-        s = [s.name for s in subjects if s.id == doc.subjectID][0]
+    for doc in docs:        
+        g = int_to_name(doc.gradeID)
+        s = int_to_name(doc.subjectID)
         doc_arr = [doc.doc_URL, doc.name, doc.create_user, g, s]
         filtered_array.append(doc_arr)
     return filtered_array
 
-def filter_docs(gID, sID):
-    filtered_array = []
-    g = [g.name for g in grades if int(g.id) == int(gID)][0]
-    s = [s.name for s in subjects if int(s.id) == int(sID)][0]
-    for doc in docs:
-        if doc.subjectID == int(sID) and doc.gradeID == int(gID):
-            doc_arr = [doc.doc_URL, doc.name, doc.create_user, g, s]
-            filtered_array.append(doc_arr)
-    return filtered_array
+def filter_docs(ID, array):                         #filters into new list
+    new_array = []
+    if ID is None:                                  #if that dropdown wasn't filled out
+        return array
+    for doc in array:                               #doc is a list, seen above in creation of doc_arr
+        if str(name_to_int(doc[3])) == ID or str(name_to_int(doc[4])) == ID: 
+            doc_arr = [doc[0], doc[1], doc[2], doc[3], doc[4]]
+            new_array.append(doc_arr)
+    return new_array
 
-
+# ID or ID == 0 or doc[4] == ID
 #filter = 
 #Controller
 @app.route('/', methods=["GET"])
@@ -91,11 +107,13 @@ def home():
 
 @app.route('/search', methods=["GET", "POST"])
 def search():
+    filtered_docs = display_all_docs()                  #necessary to first fill list
     gID = request.args.get('gID', None)
     sID = request.args.get('sID', None)
-    if gID is None or sID is None:
+    if gID is None and sID is None:
         return redirect("/")
-    filtered_docs = filter_docs(gID, sID)
+    filtered_docs = filter_docs(gID, filtered_docs)     #filter using one category
+    filtered_docs = filter_docs(sID, filtered_docs)     #filter using the other category
     return render_template('home.html', header=headers, data=filtered_docs)
 
 @app.route("/upload")
