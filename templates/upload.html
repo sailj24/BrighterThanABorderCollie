@@ -1,14 +1,54 @@
 <!DOCTYPE html>
 <html>
-<title>Uploader</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<body>
-
-<header class="w3-container w3-red">
-  <h1>Under Construction</h1>
-</header>
-
-</body>
+  <title>Uploader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <body>
+    <header class="w3-container w3-green">
+      <h1>BrighterSpace.com</h1>
+    </header>
+    <div class="w3-display-middle">
+      <form action = "uploader" method = "POST" enctype = "multipart/form-data" class="w3-container w3-card-4">
+        <h1>Upload File to Site</h1>
+        <label><b>First and Last Name</b></label>
+        <input class="w3-input w3-border" type="text" name="name" id="name">
+        <label><b>Name of Document</b></label>
+        <input class="w3-input w3-border" type="text" name="docName" id="docName">
+        <label><b>Professor</b></label>
+        <input class="w3-input w3-border" type="text" name="prof" id="prof">
+        <p>
+        <select id="grades" class="w3-select w3-half w3-border" name="gID">
+          <option value="" disabled selected>Choose Grade</option>
+          {% for val in grades %}
+          <option value="{{val.id}}">{{ val.name }}</option>
+          {% endfor %}
+        </select>
+        <!-- <label>Choose Subject</label> -->
+        <select id="subjects" class="w3-select w3-half w3-border" name="sID">
+          <option value="" disabled selected>Choose Subject</option>
+          {% for val in subjects %}
+          <option value="{{val.id}}">{{ val.name }}</option>
+          {% endfor %}
+        </select>
+      </p>
+        <div class="w3-container">
+          <p><input type = "file" name = "file" />
+          <input type = "submit" id="upload"/></p>
+        </div>
+      </form> 
+      
+  </body>
 </html>
+<script>
+  var userName = document.getElementById('name').value;
+  var docName = document.getElementById('docName').value;
+  var prof = document.getElementById('prof').value;
+  var gradeID = document.getElementById('grades').value;
+  var subjectID = document.getElementById('subjects').value;
+  var button = document.getElementById("upload")
+
+  button.addEventListener('click', function(e) {
+    document.location.href = '/uploader?gID=' + gradeID + '&sID=' + subjectID + '&name=' + userName + '&docName' + '&prof=' + prof;
+  });
+</script>
 
