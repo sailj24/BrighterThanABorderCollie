@@ -7,6 +7,7 @@ from flask import Flask, render_template, redirect
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseUpload
 from flask import jsonify, request, abort, json
+import flask
 #from google import Create_Service
 
 #label: start
@@ -14,6 +15,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import ast
 import os
+import threading
 
 app = Flask(__name__)
 
@@ -81,25 +83,6 @@ def start():
         #print(values)
 
 
-#getting data ready
-for d in doc_lists:
-    values = [value for value in d.values()]
-    input_doc = doc(values[1], values[2], values[4], values[0], values[3], values[5]) 
-    docs.append(input_doc)
-    
-
-for d in grades_maps:
-    values = [value for value in d.values()]
-    in_grade = grade(values[0], values[1])
-    grades.append(in_grade)
-    print(values)
-
-for d in subjects_map:
-    values = [value for value in d.values()]
-    in_subject = subject(values[0], values[1])
-    subjects.append(in_subject)
-    print(values)
-
 
 #functions
 def name_to_int(name):                      #way to jump back and forth between a name and id
@@ -117,6 +100,42 @@ def int_to_name(int):
     for subject in subjects:
         if int == subject.id:
             return subject.name
+
+def upload_doc(fileI, name, docName, prof, gID, sID):
+    folder_id = ['1XxXFS8QmngAW7Jat4rgsL1G8M_jQfaCu']
+    file_name, file_extension = os.path.splitext(fileI.filename)
+    file_metadata = {'name': fileI.filename, 'parents' : folder_id}
+    f = fileI.stream
+    media = MediaIoBaseUpload(f, mimetype=fileI.mimetype, chunksize=-1, resumable = True)
+    file = drive_service.files().create(body=file_metadata,
+                                    media_body=media,
+                                    fields='id').execute()
+    id = file.get('id')
+    permission1 = {
+        'type': 'user',
+        'role': ['writer', 'reader'],
+        'emailAddress': 'BrighterSpace13@gmail.com',  # Please set your email of Google account.
+    }
+    permission2 = {
+                'value'    : '',
+                'type'     : 'anyone',
+                'role'     : 'reader',
+                'withLink' : 'true',
+                }
+    drive_service.permissions().create(fileId=id, body=permission1).execute()
+    drive_service.permissions().create(fileId=id, body=permission2).execute()
+
+    row = next_available_row(docs_table)
+    docs_table.update_cell(row, 1, id)
+    docs_table.update_cell(row, 2, docName)
+    docs_table.update_cell(row, 4, 'N/A')
+    docs_table.update_cell(row, 5, gID)
+    docs_table.update_cell(row, 6, sID)
+    docs_table.update_cell(row, 3, name)
+    docs_table.update_cell(row, 7, file_extension.strip('.'))
+    docs_table.update_cell(row, 8, prof)
+
+
 
 def display_all_docs():                             #fills the list
     filtered_array = []
@@ -180,60 +199,19 @@ def upload():
 
 @app.route("/uploader", methods=['POST'])
 def uploader():
-    folder_id = ['1XxXFS8QmngAW7Jat4rgsL1G8M_jQfaCu']
     fileI = request.files['file']
     name = request.form['name']
     docName = request.form['docName']
     prof = request.form['prof']
     gID = request.form['gID']
     sID = request.form['sID']
-
-    file_name, file_extension = os.path.splitext(fileI.filename)
-    file_metadata = {'name': fileI.filename, 'parents' : folder_id}
-    f = fileI.stream
-    media = MediaIoBaseUpload(f, mimetype=fileI.mimetype, chunksize=-1, resumable = True)
-    file = drive_service.files().create(body=file_metadata,
-                                    media_body=media,
-                                    fields='id').execute()
-    id = file.get('id')
-    permission1 = {
-        'type': 'user',
-        'role': ['writer', 'reader'],
-        'emailAddress': 'BrighterSpace13@gmail.com',  # Please set your email of Google account.
-    }
-    permission2 = {
-                'value'    : '',
-                'type'     : 'anyone',
-                'role'     : 'reader',
-                'withLink' : 'true',
-                }
-    drive_service.permissions().create(fileId=id, body=permission1).execute()
-    drive_service.permissions().create(fileId=id, body=permission2).execute()
-    # res = None
-    # while res is None:
-    #     status, res = file.next_chunk()
-    #     if status :
-    #         print('Uploading %d%% "%s" (%s)' % (status.progress(), fileI.filename, res['mimeType']))
-    # print("Upload Complete!")
     
-
-    # name = request.args.get('name', None)
-    # docName = request.args.get('docName', None)
-    # prof = request.args.get('prof', None)
-    # gID = request.args.get('gID', None)
-    # sID = request.args.get('sID', None)
-
-    row = next_available_row(docs_table)
-    docs_table.update_cell(row, 1, id)
-    docs_table.update_cell(row, 2, docName)
-    docs_table.update_cell(row, 4, 'N/A')
-    docs_table.update_cell(row, 5, gID)
-    docs_table.update_cell(row, 6, sID)
-    docs_table.update_cell(row, 3, name)
-    docs_table.update_cell(row, 7, file_extension.strip('.'))
-    docs_table.update_cell(row, 8, prof)
-
-    start()
+    t = threading.Thread(target=upload_doc, args=(fileI, name, docName, prof, gID, sID))
+    t.daemon = True
+    t2 = threading.Thread(target=start)
+    t2.daemon = True
+    t.start(), t2.start(), t.join(), t2.join()
+    #start()
 
     return redirect("/")
 
