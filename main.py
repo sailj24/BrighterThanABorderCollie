@@ -81,25 +81,6 @@ def start():
         #print(values)
 
 
-#getting data ready
-for d in doc_lists:
-    values = [value for value in d.values()]
-    input_doc = doc(values[1], values[2], values[4], values[0], values[3], values[5]) 
-    docs.append(input_doc)
-    
-
-for d in grades_maps:
-    values = [value for value in d.values()]
-    in_grade = grade(values[0], values[1])
-    grades.append(in_grade)
-    print(values)
-
-for d in subjects_map:
-    values = [value for value in d.values()]
-    in_subject = subject(values[0], values[1])
-    subjects.append(in_subject)
-    print(values)
-
 
 #functions
 def name_to_int(name):                      #way to jump back and forth between a name and id
