@@ -142,7 +142,7 @@ def display_all_docs():                             #fills the list
     for doc in docs:        
         g = int_to_name(doc.gradeID)
         s = int_to_name(doc.subjectID)
-        doc_arr = [doc.doc_URL, doc.name, doc.create_user, g, s]
+        doc_arr = [doc.id, doc.doc_URL, doc.name, doc.create_user, g, s]
         filtered_array.append(doc_arr)
     return filtered_array
 
@@ -153,7 +153,7 @@ def filter_docs(gID, sID):
     s = [s.name for s in subjects if int(s.id) == int(sID)][0]
     for doc in docs:
         if doc.subjectID == int(sID) and doc.gradeID == int(gID):
-            doc_arr = [doc.doc_URL, doc.name, doc.create_user, g, s]
+            doc_arr = [doc.id, doc.doc_URL, doc.name, doc.create_user, g, s]
             filtered_array.append(doc_arr)
     return filtered_array
 
@@ -162,7 +162,8 @@ def next_available_row(worksheet):
     next_available_row = len(str_list)+1
     return next_available_row
 
-start()
+def get_doc(id):
+    return [d for d in docs if d.id == id][0]
 
 def filter_docs(ID, array):                         #filters into new list
     new_array = []
@@ -174,6 +175,8 @@ def filter_docs(ID, array):                         #filters into new list
             new_array.append(doc_arr)
     return new_array
 
+
+start()
 
 #Controller
 @app.route('/', methods=["GET"])
@@ -214,6 +217,12 @@ def uploader():
     #start()
 
     return redirect("/")
+
+@app.route("/doc_page")
+def doc_page():
+    id = request.args.get('id', None)
+    docObj = get_doc(id)
+    return render_template("doc.html", doc=docObj)
 
 if __name__ == "__main__":
     app.run(debug=True)
