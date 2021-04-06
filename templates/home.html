@@ -4,7 +4,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <body>
-
+<style>
+.clickable-row {
+    cursor: pointer;
+}
+</style>
 <header class="w3-container w3-green">
   <h1>BrighterSpace: Share Your Study Materials</h1>
 </header>
@@ -40,7 +44,7 @@
 
       {% block content %}
       <div class="w3-responsive" style="height:600px;overflow:auto;">
-        <table class="w3-table-all">
+        <table class="w3-table-all w3-hoverable">
           <!-- table header -->
           {% if header %}
           <thead>
@@ -55,7 +59,8 @@
           <!-- table rows -->
           {% for list in data %}
           <tr>
-            {% for value in list %}
+            <td><button class="w3-button w3-green w3-border-green w3-round-large" onclick="document.location='/doc_page?id={{list[0]}}'">Document</button></td>
+            {% for value in list[2:] %}
             <td> {{ value }} </td>
             {% endfor %}
           </tr>
@@ -69,11 +74,14 @@
 </html>
 
 <script>
-  var gradeID = document.getElementById('grades').value;
-  var subjectID = document.getElementById('subjects').value;
-  var button = document.getElementById("searchButton")
-
-  searchButton.addEventListener('click', function(e) {
-    document.location.href = '/search?gID=' + gradeID + '&sID=' + subjectID;
+var elements = document.getElementsByClassName('clickable');
+for (var i = 0; i < elements.length; i++) {
+  var element = elements[i];
+  element.addEventListener('click', function() {
+    var href = this.dataset.href;
+    if (href) {
+        window.location.assign(href);
+    }
   });
+}
 </script>
