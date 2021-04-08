@@ -1,7 +1,11 @@
+Please use pip install for these packages:
+
 Flask
 Werkzeug
 os
 requests
 pandas
 ast
-
+gspread
+oauth2client-master
+google-api-python-client
