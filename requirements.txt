@@ -1,7 +1,11 @@
+Please pip install the following packages to be able to properly run main.py:
+
 Flask
 Werkzeug
 os
 requests
 pandas
 ast
-
+gspread
+oauth2client-master
+google-api-python-client
