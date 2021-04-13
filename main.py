@@ -218,8 +218,7 @@ def uploader():
     t.daemon, t2.daemon = True, True
     t.start(), t2.start(), t.join(), t2.join()
     #start()
-
-    return redirect("/")
+    return redirect ("/upload_successful")
 
 @app.route("/doc_page", methods=["GET", "POST"])
 def doc_page():
@@ -227,6 +226,9 @@ def doc_page():
     docObj = get_doc(id)
     return render_template("doc.html", doc=docObj)
 
+@app.route("/upload_successful", methods=["Get"])
+def upload_successful():
+    return render_template("upload_successful.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
