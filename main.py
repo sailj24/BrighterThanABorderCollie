@@ -164,7 +164,10 @@ def next_available_row(worksheet):
     return next_available_row
 
 def get_doc(id):
-    return [d for d in docs if d.id == id][0]
+    for d in docs:
+        if d.id == id:
+            return d
+    #return [d for d in docs if d.id == id][0]        #built-in error message works, if you write this condition the long way around
 
 def filter_docs(ID, array):                         #filters into new list
     new_array = []
@@ -223,6 +226,7 @@ def doc_page():
     id = request.args.get('id', None)
     docObj = get_doc(id)
     return render_template("doc.html", doc=docObj)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
