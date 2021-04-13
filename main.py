@@ -147,15 +147,15 @@ def display_all_docs():                             #fills the list
     return filtered_array
 
 
-def filter_docs(gID, sID):
-    filtered_array = []
-    g = [g.name for g in grades if int(g.id) == int(gID)][0]
-    s = [s.name for s in subjects if int(s.id) == int(sID)][0]
-    for doc in docs:
-        if doc.subjectID == int(sID) and doc.gradeID == int(gID):
-            doc_arr = [doc.id, doc.doc_URL, doc.name, doc.create_user, g, s]
-            filtered_array.append(doc_arr)
-    return filtered_array
+#def filter_docs(gID, sID):
+ #   filtered_array = []
+  #  g = [g.name for g in grades if int(g.id) == int(gID)][0]
+   # s = [s.name for s in subjects if int(s.id) == int(sID)][0]
+    #for doc in docs:
+     #   if doc.subjectID == int(sID) and doc.gradeID == int(gID):
+      #      doc_arr = [doc.id, doc.doc_URL, doc.name, doc.create_user, g, s]
+       #     filtered_array.append(doc_arr)
+   # return filtered_array
 
 
 def next_available_row(worksheet):
@@ -166,15 +166,15 @@ def next_available_row(worksheet):
 def get_doc(id):
     return [d for d in docs if d.id == id][0]
 
-# def filter_docs(ID, array):                         #filters into new list
-#     new_array = []
-#     if ID is None:                                  #if that dropdown wasn't filled out
-#         return array
-#     for doc in array:                               #doc is a list, seen above in creation of doc_arr
-#         if str(name_to_int(doc[3])) == ID or str(name_to_int(doc[4])) == ID: 
-#             doc_arr = [doc[0], doc[1], doc[2], doc[3], doc[4]]
-#             new_array.append(doc_arr)
-#     return new_array
+def filter_docs(ID, array):                         #filters into new list
+    new_array = []
+    if ID is None:                                  #if that dropdown wasn't filled out
+        return array
+    for doc in array:                               #doc is a list, seen above in creation of doc_arr
+        if str(name_to_int(doc[4])) == ID or str(name_to_int(doc[5])) == ID: 
+            doc_arr = [doc[0], doc[1], doc[2], doc[3], doc[4], doc[5]]
+            new_array.append(doc_arr)
+    return new_array
 
 
 start()
@@ -188,13 +188,13 @@ def home():
 
 @app.route('/search', methods=["GET", "POST"])
 def search():
-    #filtered_docs = display_all_docs()                  #necessary to first fill list
+    filtered_docs = display_all_docs()                  #necessary to first fill list
     gID = request.args.get('gID', None)
     sID = request.args.get('sID', None)
     if gID is None and sID is None:
         return redirect("/")
-    filtered_docs = filter_docs(gID, sID)     #filter using one category
-    #filtered_docs = filter_docs(sID, filtered_docs)     #filter using the other category
+    filtered_docs = filter_docs(gID, filtered_docs)     #filter using one category
+    filtered_docs = filter_docs(sID, filtered_docs)     #filter using the other category
     return render_template('home.html', header=headers, data=filtered_docs)
 
 @app.route("/upload")
@@ -225,7 +225,7 @@ def doc_page():
     return render_template("doc.html", doc=docObj)
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    app.run(debug=True)
 
 
 print(filter_docs(13,1))
