@@ -163,6 +163,7 @@ def next_available_row(worksheet):
     next_available_row = len(str_list)+1
     return next_available_row
 
+#doc.html gets doc field information from being given it here
 def get_doc(id):
     for d in docs:
         if d.id == id:
@@ -220,13 +221,16 @@ def uploader():
     #start()
     return redirect ("/upload_successful")
 
+
 @app.route("/doc_page", methods=["GET", "POST"])
 def doc_page():
     id = request.args.get('id', None)
     docObj = get_doc(id)
     return render_template("doc.html", doc=docObj)
 
+
 @app.route("/upload_successful", methods=["Get"])
+#Double check whether get needs all caps
 def upload_successful():
     return render_template("upload_successful.html")
 
