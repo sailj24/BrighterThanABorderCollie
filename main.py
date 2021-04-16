@@ -135,13 +135,15 @@ def upload_doc(fileI, name, docName, prof, gID, sID):
     docs_table.update_cell(row, 7, file_extension.strip('.'))
     docs_table.update_cell(row, 8, prof)
 
+    return id, file_extension
+
 
 
 def display_all_docs():                             #fills the list
     filtered_array = []
     for doc in docs:        
-        g = int_to_name(doc.gradeID)
-        s = int_to_name(doc.subjectID)
+        g = [g.name for g in grades if int(g.id) == int(doc.gradeID)][0]
+        s = [s.name for s in subjects if int(s.id) == int(doc.subjectID)][0]
         doc_arr = [doc.id, doc.doc_URL, doc.name, doc.create_user, g, s]
         filtered_array.append(doc_arr)
     return filtered_array
@@ -214,10 +216,9 @@ def uploader():
     gID = request.form['gID']
     sID = request.form['sID']
     
-    t = threading.Thread(target=upload_doc, args=(fileI, name, docName, prof, gID, sID))
-    t2 = threading.Thread(target=start)
-    t.daemon, t2.daemon = True, True
-    t.start(), t2.start(), t.join(), t2.join()
+    id, mimetype = upload_doc(fileI, name, docName, prof, gID, sID)
+    d = doc(id, docName, 'N/A', gID, sID, name, mimetype, prof)
+    docs.append(d)
     #start()
     return redirect ("/upload_successful")
 
@@ -237,5 +238,3 @@ def upload_successful():
 if __name__ == "__main__":
     app.run(debug=True)
 
-
-print(filter_docs(13,1))
