@@ -1,5 +1,6 @@
 @echo off
-set "VIRTUAL_ENV=C:\users\salvador_villalon\documents\work\projects\hub_post\flask_tutorial\virtual"
+
+set "VIRTUAL_ENV=C:\Users\carlo\Documents\College\Junior\Spring\software_eng\BrighterThanABorderCollie\virtual"
 
 if defined _OLD_VIRTUAL_PROMPT (
     set "PROMPT=%_OLD_VIRTUAL_PROMPT%"
@@ -7,9 +8,18 @@ if defined _OLD_VIRTUAL_PROMPT (
     if not defined PROMPT (
         set "PROMPT=$P$G"
     )
-    set "_OLD_VIRTUAL_PROMPT=%PROMPT%"
+    if not defined VIRTUAL_ENV_DISABLE_PROMPT (
+        set "_OLD_VIRTUAL_PROMPT=%PROMPT%"
+    )
 )
-set "PROMPT=(virtual) %PROMPT%"
+if not defined VIRTUAL_ENV_DISABLE_PROMPT (
+    set "ENV_PROMPT="
+    if NOT DEFINED ENV_PROMPT (
+        for %%d in ("%VIRTUAL_ENV%") do set "ENV_PROMPT=(%%~nxd) "
+    )
+    )
+    set "PROMPT=%ENV_PROMPT%%PROMPT%"
+)
 
 REM Don't use () to avoid problems with them in %PATH%
 if defined _OLD_VIRTUAL_PYTHONHOME goto ENDIFVHOME
