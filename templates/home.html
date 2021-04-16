@@ -4,8 +4,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <body>
-
-<header class="w3-container w3-blue">
+<style>
+.clickable-row {
+    cursor: pointer;
+}
+</style>
+<header class="w3-container w3-green">
   <h1>BrighterSpace: Share Your Study Materials</h1>
 </header>
     <strong><nav>
@@ -15,30 +19,32 @@
     </nav></strong>
 <div class="w3-container">
   <p>BrighterSpace is a public repository for University of Dallas students to 
-    post their study documents from any class</p>
+    post their study documents from any class.</p>
         
     <form class="w3-container w3-card-4" action="search">
       <h1>Select Search Requirements</h1>
-      <div class="w3-bar">
-          <select id="grades" class="w3-select" name="gID">
-            <option value="" disabled selected>Choose your option</option>
+      <div class="w3-bar w3-row-padding">
+          <!-- <label>Choose Grade</label> -->
+          <select id="grades" class="w3-select w3-half w3-border" name="gID">
+            <option value="" disabled selected>Choose Grade</option>
             {% for val in grades %}
             <option value="{{val.id}}">{{ val.name }}</option>
             {% endfor %}
           </select>
-          <select id="subjects" class="w3-select" name="sID">
-            <option value="" disabled selected>Choose your option</option>
+          <!-- <label>Choose Subject</label> -->
+          <select id="subjects" class="w3-select w3-half w3-border" name="sID">
+            <option value="" disabled selected>Choose Subject</option>
             {% for val in subjects %}
             <option value="{{val.id}}">{{ val.name }}</option>
             {% endfor %}
           </select>
-        </div>
-      <p><button id="searchButton" class="w3-btn w3-teal">Search</button></p>
+      </div>
+    <p><button id="searchButton" class="w3-btn w3-teal">Search</button></p>
     </form>
 
       {% block content %}
       <div class="w3-responsive" style="height:600px;overflow:auto;">
-        <table class="w3-table-all">
+        <table class="w3-table-all w3-hoverable">
           <!-- table header -->
           {% if header %}
           <thead>
@@ -53,7 +59,8 @@
           <!-- table rows -->
           {% for list in data %}
           <tr>
-            {% for value in list %}
+            <td><button class="w3-button w3-green w3-border-green w3-round-large" onclick="document.location='/doc_page?id={{list[0]}}'">Document</button></td>
+            {% for value in list[2:] %}
             <td> {{ value }} </td>
             {% endfor %}
           </tr>
@@ -66,12 +73,17 @@
 </body>
 </html>
 
+<!--On click functions-->
+<!-- href will be a hyperlink / link -->
 <script>
-  var gradeID = document.getElementById('grades').value;
-  var subjectID = document.getElementById('subjects').value;
-  var button = document.getElementById("searchButton")
-
-  searchButton.addEventListener('click', function(e) {
-    document.location.href = '/search?gID=' + gradeID + '&sID=' + subjectID;
+var elements = document.getElementsByClassName('clickable');
+for (var i = 0; i < elements.length; i++) {
+  var element = elements[i];
+  element.addEventListener('click', function() {
+    var href = this.dataset.href;
+    if (href) {
+        window.location.assign(href);
+    }
   });
+}
 </script>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<!--Can use doc.[field] (see docs.py) since doc_page in main.py renders a template with this doc.html and hands alongside it a doc object.-->
+
+<title>Document Page</title>
+<body>
+    <header class="w3-container w3-green">
+      <h1>BrighterSpace.com</h1>
+    </header>
+        <iframe src="https://drive.google.com/file/d/{{doc.id}}/preview" frameborder="0" height="700" width="500"></iframe>
+</body>
+</html>
