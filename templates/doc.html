@@ -12,6 +12,12 @@
     <header class="w3-container w3-green">
       <h1>BrighterSpace.com</h1>
     </header>
-        <iframe src="https://drive.google.com/file/d/{{doc.id}}/preview" frameborder="0" height="700" width="500"></iframe>
+    <div class="w3-padding w3-display-middle">
+      <div class="w3-container w3-light-grey w3-center">
+        <h2 style="text-shadow:1px 1px 0 #444">{{doc.name}}</h2>
+      </div>
+      <iframe src="https://drive.google.com/file/d/{{doc.id}}/preview#page=1" onload="javascript:this.contentWindow.location.hash=':0.page.1';" height="700" width="500"></iframe>
+      <button href="https://drive.google.com/drive/{{doc.id}}/export?format={{doc.extension}}&ddrp=1#" class="w3-btn w3-teal">Download Document</button>
+    </div>
 </body>
 </html>

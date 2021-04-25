@@ -1,4 +1,6 @@
 
+from logging import debug
+from re import template
 from Model.docs import doc
 from Model.grades import grade
 from Model.subjects import subject
@@ -236,5 +238,5 @@ def upload_successful():
     return render_template("upload_successful.html")
 
 if __name__ == "__main__":
-    app.run(debug=True, TEMPLATES_AUTO_RELOAD=True)
+    app.run(debug=True)
 
