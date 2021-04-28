@@ -17,7 +17,7 @@
      <div class="w3-container w3-light-grey w3-center">
       <h2 style="text-shadow:1px 1px 0 #444">{{doc.name}}</h2>
     </div>
-    <iframe src="https://drive.google.com/file/d/{{doc.id}}/preview#page=1" onload="javascript:this.contentWindow.location.hash=':0.page.1';" height="700" width="500"></iframe>
-    <button href="https://drive.google.com/drive/{{doc.id}}/export?format={{doc.extension}}&ddrp=1#" class="w3-btn w3-teal">Download Document</button>
+    <iframe src="https://drive.google.com/file/d/{{doc.id}}/preview#page=1" height="700" width="500"></iframe>
+    <a href="https://drive.google.com/uc?id={{doc.id}}&authuser=3&export=download" class="w3-btn w3-teal">Download Document</a>
 </body>
 </html>
