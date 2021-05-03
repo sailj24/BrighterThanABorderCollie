@@ -1,6 +1,7 @@
-
-from logging import debug
-from re import template
+####################################
+# App: BrighterThanABorderCollie
+# Authors: Carlos Gomez, Kathleen Blute, Clarissa Skipworth, Sri Harini
+# Date of Final Draft: 5/4/21
 from Model.docs import doc
 from Model.grades import grade
 from Model.subjects import subject
@@ -21,10 +22,11 @@ import threading
 
 app = Flask(__name__)
 
-#Google API initialization
+# Google API initialization
 credential = ServiceAccountCredentials.from_json_keyfile_name("credentials.json",["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"])
-
+# sheets
 client = gspread.authorize(credential)
+# drive
 drive_service = build('drive', 'v3', credentials=credential)
 
 #globals
@@ -35,13 +37,12 @@ headers = []
 docs_table = None
 
 def start():
-    #local variable initialization
     global docs_table
     docs_table = client.open("BS_Database").sheet1
     grade_table = client.open("BS_Database").get_worksheet(1)
     subject_table = client.open("BS_Database").get_worksheet(2)
 
-
+    # converting sheet info to lists of lists.
     data = json.dumps(docs_table.get_all_records())
     doc_lists = ast.literal_eval(data)
 
@@ -56,7 +57,7 @@ def start():
     headers = ['Download Link', 'Name of Document', 'Uploader', 'Grade', 'Subject']
 
     # doc, subject, and grade object lists
-    # start off empty for refresh capabilities
+    # start off empty for refresh capabilities.
     global docs
     docs = []
     global grades
@@ -64,7 +65,8 @@ def start():
     global subjects
     subjects = []
 
-    #getting data ready
+    # getting data ready by putting each row from 
+    # each sheet into a doc, grade, or subject object.
     for d in doc_lists:
         values = [value for value in d.values()]
         #print(values)
@@ -86,8 +88,12 @@ def start():
 
 
 
-#functions
-def name_to_int(name):                      #way to jump back and forth between a name and id
+# functions
+
+# function to jump back and forth between a name and id.
+# params: string name
+# return: int subject/grade id
+def name_to_int(name):
     for grade in grades:
         if name == grade.name:
             return grade.id
@@ -95,6 +101,9 @@ def name_to_int(name):                      #way to jump back and forth between 
         if name == subject.name:
             return subject.id
 
+# function to jump back and forth between a id and name.
+# params: int subject/grade id
+# return: int subject/grade name
 def int_to_name(int):
     for grade in grades:
         if int == grade.id:
@@ -103,6 +112,10 @@ def int_to_name(int):
         if int == subject.id:
             return subject.name
 
+# function to upload document information to the google spread sheet database and
+# the actual document to google drive.
+# params: fileInput IO, string username, string documentName, string gradeID, string subjectID 
+# return: string idOfDocInDrive, docExtension
 def upload_doc(fileI, name, docName, prof, gID, sID):
     folder_id = ['1XxXFS8QmngAW7Jat4rgsL1G8M_jQfaCu']
     file_name, file_extension = os.path.splitext(fileI.filename)
@@ -113,6 +126,10 @@ def upload_doc(fileI, name, docName, prof, gID, sID):
                                     media_body=media,
                                     fields='id').execute()
     id = file.get('id')
+    
+    # permissions to give read access to our actual
+    # account and to give read access to any user on
+    # the website.
     permission1 = {
         'type': 'user',
         'role': ['writer', 'reader'],
@@ -139,18 +156,18 @@ def upload_doc(fileI, name, docName, prof, gID, sID):
 
     return id, file_extension
 
-
-
-def display_all_docs():                             #fills the list
+# function to get all information on all docs in database.
+# return: list of lists with limited doc information for each doc
+def display_all_docs():
     filtered_array = []
     for doc in docs:        
-        g = [g.name for g in grades if int(g.id) == int(doc.gradeID)][0]
-        s = [s.name for s in subjects if int(s.id) == int(doc.subjectID)][0]
+        g = [g.name for g in grades if int(g.id) == int(doc.gradeID)][0] # grabs names of grades
+        s = [s.name for s in subjects if int(s.id) == int(doc.subjectID)][0] # grabs names of subjects
         doc_arr = [doc.id, doc.doc_URL, doc.name, doc.create_user, g, s]
         filtered_array.append(doc_arr)
     return filtered_array
 
-
+#backup filter function
 #def filter_docs(gID, sID):
  #   filtered_array = []
   #  g = [g.name for g in grades if int(g.id) == int(gID)][0]
@@ -161,7 +178,10 @@ def display_all_docs():                             #fills the list
        #     filtered_array.append(doc_arr)
    # return filtered_array
 
-
+# function to return the next available row in 
+# google sheets for appending doc metadata.
+# params: worksheet object
+# return: int next_available_row
 def next_available_row(worksheet):
     str_list = list(filter(None, worksheet.col_values(1)))
     next_available_row = len(str_list)+1
@@ -172,9 +192,13 @@ def get_doc(id):
     for d in docs:
         if d.id == id:
             return d
-    #return [d for d in docs if d.id == id][0]        #built-in error message works, if you write this condition the long way around
+    #return [d for d in docs if d.id == id][0]      # built-in error message works, 
+                                                    # if you write this condition the long way around
 
-def filter_docs(ID, array):                         #filters into new list
+# function to filter doc view down by grade or subject id.
+# params: subject/grade id, docView array
+# return: filtered_doc array
+def filter_docs(ID, array):
     new_array = []
     if ID is None:                                  #if that dropdown wasn't filled out
         return array
@@ -184,20 +208,24 @@ def filter_docs(ID, array):                         #filters into new list
             new_array.append(doc_arr)
     return new_array
 
-
+# initiates the data for the view
 start()
 
 #Controller
+
+# displays the home page with all available docs
 @app.route('/', methods=["GET"])
 def home():
     #start()
     all_docs = display_all_docs()
     return render_template('home.html', header=headers, data=all_docs, grades=grades, subjects=subjects)
 
+# search API and diplays filtered doc 
+# list based on grade and subject id.
 @app.route('/search', methods=["GET", "POST"])
 def search():
     filtered_docs = display_all_docs()                  #necessary to first fill list
-    gID = request.args.get('gID', None)
+    gID = request.args.get('gID', None)                 #gets id's from URL
     sID = request.args.get('sID', None)
     if gID is None and sID is None:
         return redirect("/")
@@ -209,6 +237,8 @@ def search():
 def upload():
     return render_template("upload.html", grades=grades, subjects=subjects)
 
+# post API to upload doc and metadata on 
+# doc to google sheets and drive.
 @app.route("/uploader", methods=['POST'])
 def uploader():
     fileI = request.files['file']
@@ -224,19 +254,20 @@ def uploader():
     #start()
     return redirect ("/upload_successful")
 
-
+# based on doc id, displays a document page
+# with informaiton on one document
 @app.route("/doc_page", methods=["GET", "POST"])
 def doc_page():
     id = request.args.get('id', None)
     docObj = get_doc(id)
     return render_template("doc.html", doc=docObj)
 
-
+# displays confimation page that document was
+# successfully uploaded 
 @app.route("/upload_successful", methods=["Get"])
-#Double check whether get needs all caps
 def upload_successful():
     return render_template("upload_successful.html")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, TEMPLATES_AUTO_RELOAD=True)
 
