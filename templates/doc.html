@@ -17,7 +17,22 @@
      <div class="w3-container w3-light-grey w3-center">
       <h2 style="text-shadow:1px 1px 0 #444">{{doc.name}}</h2>
     </div>
-    <iframe src="https://drive.google.com/file/d/{{doc.id}}/preview#page=1" height="700" width="500"></iframe>
-    <a href="https://drive.google.com/uc?id={{doc.id}}&authuser=3&export=download" class="w3-btn w3-teal">Download Document</a>
+    <div style="float:left; padding:20px; background-color: lightgray;" >
+      <iframe src="https://drive.google.com/file/d/{{doc.id}}/preview#page=1" height="500" width="500"></iframe>
+      <a href="https://drive.google.com/uc?id={{doc.id}}&authuser=3&export=download" class="w3-btn w3-teal">
+        Download Document
+      </a>
+    </div>
+    <div style="float:left; padding:50px; background-color:darkgreen; color:white;">
+      <h2 style="text-shadow:1px 1px 0 #444">
+        Professor: {{doc.professor}}
+      </h2>
+      <h2 style="text-shadow:1px 1px 0 #444">
+        Grade: {{grade}}
+      </h2>
+      <h2 style="text-shadow:1px 1px 0 #444">
+        Subject: {{subject}}
+      </h2>
+    </div>
 </body>
 </html>
