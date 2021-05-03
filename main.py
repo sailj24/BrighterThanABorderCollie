@@ -167,6 +167,7 @@ def next_available_row(worksheet):
     next_available_row = len(str_list)+1
     return next_available_row
 
+
 #doc.html gets doc field information from being given it here
 def get_doc(id):
     for d in docs:
@@ -229,7 +230,10 @@ def uploader():
 def doc_page():
     id = request.args.get('id', None)
     docObj = get_doc(id)
-    return render_template("doc.html", doc=docObj)
+    docObjGrade = int_to_name(docObj.gradeID)
+    docObjSubject = int_to_name(docObj.subjectID)
+
+    return render_template("doc.html", doc=docObj, grade=docObjGrade, subject=docObjSubject)
 
 
 @app.route("/upload_successful", methods=["Get"])
